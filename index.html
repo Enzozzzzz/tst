@@ -55,12 +55,21 @@
         const loaderBox = document.querySelector('.terminal-loader');
         const video = document.getElementById('bg-video');
 
+        // Force le play même en économie d'énergie[cite: 7]
         function forceVideoPlay() {
-            video.play().catch(() => {
-                document.addEventListener('touchstart', () => {
-                    video.play();
-                }, { once: true });
-            });
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Si l'autoplay est bloqué, on réessaye au premier clic ou touché[cite: 7]
+                    const retry = () => {
+                        video.play();
+                        document.removeEventListener('touchstart', retry);
+                        document.removeEventListener('click', retry);
+                    };
+                    document.addEventListener('touchstart', retry, { once: true });
+                    document.addEventListener('click', retry, { once: true });
+                });
+            }
         }
 
         window.addEventListener('load', forceVideoPlay);
@@ -76,7 +85,7 @@
                     setTimeout(() => {
                         window.location.href = "perso.html";
                     }, 600);
-                }, 5000); // Délai de 5 secondes restauré[cite: 4]
+                }, 5000); 
             }, 500); 
         });
     </script>

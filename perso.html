@@ -12,7 +12,6 @@
             box-sizing: border-box; overflow: hidden;
         }
 
-        /* Halo de fond restauré[cite: 2] */
         .background-halo {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 0; height: 0; background: radial-gradient(circle, rgba(0, 255, 65, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
@@ -25,7 +24,7 @@
             transition: opacity 0.5s ease;
             flex-grow: 1; display: flex; 
             flex-direction: column; 
-            justify-content: flex-start; /* Aligné en haut pour défilement vers le bas */
+            justify-content: flex-start; 
         }
 
         .line { margin-bottom: 4px; opacity: 0.8; }
@@ -37,7 +36,6 @@
             align-items: center; justify-content: center;
         }
 
-        /* Animation de glitch et secousse restaurée[cite: 5] */
         .final-message {
             display: flex; flex-direction: column; align-items: center;
             text-align: center; font-weight: 900; color: #fff;
@@ -91,8 +89,6 @@
             const randomHex = "0x" + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
             
             line.textContent = `> [${randomHex}] ${randomCmd} --path:${randomFile} --src:${randomIp} ... [OK]`;
-            
-            // Insertion au sommet pour le défilement vers le bas
             terminal.insertBefore(line, terminal.firstChild);
 
             if (terminal.childNodes.length > 35) {
@@ -102,8 +98,9 @@
 
         async function start() {
             let iterations = 0;
-            const maxIterations = 120; 
+            const maxIterations = 150; 
 
+            // Vitesse doublée : passage de 30ms à 15ms[cite: 8]
             const interval = setInterval(() => {
                 addLogLine();
                 iterations++;
@@ -111,13 +108,11 @@
                     clearInterval(interval);
                     finishHack();
                 }
-            }, 30); 
+            }, 15); 
         }
 
         function finishHack() {
-            // Le terminal s'efface[cite: 5]
             terminal.style.opacity = '0';
-            // Le halo s'active[cite: 2]
             halo.classList.add('visible');
             
             setTimeout(() => {
