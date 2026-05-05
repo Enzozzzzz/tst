@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TERMINAL - SYSTEM ACCESS</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        video::-webkit-media-controls {
+            display:none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-wrapper" id="terminal-screen">
+        <div class="terminal-loader">
+            <div class="terminal-header">
+                <div class="terminal-title">Status: Encrypting...</div>
+                <div class="terminal-controls">
+                    <div class="control close"></div>
+                    <div class="control minimize"></div>
+                    <div class="control maximize"></div>
+                </div>
+            </div>
+            <div class="text">Loading...</div>
+        </div>
+    </div>
+
+    <div class="video-background">
+        <video 
+            id="bg-video" 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            webkit-playsinline
+            preload="auto"
+            style="pointer-events: none;"
+        >
+            <source src="background.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="content" id="main-ui">
+        <button class="glitch-btn" id="access-button">
+           INITIALIZE_HACK
+        </button>
+    </div>
+
+    <script>
+        const button = document.getElementById('access-button');
+        const terminalScreen = document.getElementById('terminal-screen');
+        const mainUi = document.getElementById('main-ui');
+        const loaderBox = document.querySelector('.terminal-loader');
+        const video = document.getElementById('bg-video');
+
+        function forceVideoPlay() {
+            video.play().catch(() => {
+                document.addEventListener('touchstart', () => {
+                    video.play();
+                }, { once: true });
+            });
+        }
+
+        window.addEventListener('load', forceVideoPlay);
+
+        button.addEventListener('click', () => {
+            mainUi.classList.add('fade-out');
+            setTimeout(() => {
+                terminalScreen.classList.add('active');
+                setTimeout(() => {
+                    terminalScreen.style.background = "black";
+                    terminalScreen.style.backdropFilter = "none";
+                    loaderBox.style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = "perso.html";
+                    }, 600);
+                }, 5000); // Délai de 5 secondes restauré[cite: 4]
+            }, 500); 
+        });
+    </script>
+</body>
+</html>

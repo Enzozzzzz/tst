@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SYSTEM_OVERRIDE</title>
+    <style>
+        body { 
+            margin: 0; background: #000; color: #00ff41; 
+            font-family: 'Courier New', monospace; height: 100vh;
+            display: flex; flex-direction: column; padding: 20px;
+            box-sizing: border-box; overflow: hidden;
+        }
+
+        /* Halo de fond restauré[cite: 2] */
+        .background-halo {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 0; height: 0; background: radial-gradient(circle, rgba(0, 255, 65, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%; z-index: 1; opacity: 0; transition: opacity 2s ease, width 2.5s ease, height 2.5s ease;
+        }
+        .background-halo.visible { opacity: 1; width: 150vmax; height: 150vmax; }
+
+        #terminal {
+            z-index: 5; font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            transition: opacity 0.5s ease;
+            flex-grow: 1; display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; /* Aligné en haut pour défilement vers le bas */
+        }
+
+        .line { margin-bottom: 4px; opacity: 0.8; }
+
+        .final-container {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 15;
+            display: none; width: 100%; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        /* Animation de glitch et secousse restaurée[cite: 5] */
+        .final-message {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; font-weight: 900; color: #fff;
+            text-transform: uppercase; font-size: clamp(1.4rem, 8vw, 4rem); 
+            line-height: 1.2; letter-spacing: 0.15em;
+            text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff;
+            animation: glitchText 1s infinite, shakeContainer 0.1s infinite;
+        }
+
+        @keyframes glitchText {
+            0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff; }
+            50% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff; }
+            100% { text-shadow: 0.035em 0.05em 0 #00fffc, 0.05em 0 0 #fc00ff; }
+        }
+
+        @keyframes shakeContainer {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-1px, -1px); }
+            100% { transform: translate(0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-halo" id="halo"></div>
+    <div id="terminal"></div>
+
+    <div id="final-container" class="final-container">
+        <div class="final-message">
+            <div>YOU ARE GETTING</div>
+            <div>XENONED</div>
+        </div>
+        <div style="color:red; font-weight:bold; margin-top:20px;">SYSTEM_OWNED_BY_XENON</div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const finalContainer = document.getElementById('final-container');
+        const halo = document.getElementById('halo');
+
+        const cmds = ["INJECT", "BYPASS", "DECRYPT", "FETCH", "WIPE", "SCAN", "OVERRIDE"];
+        const files = ["/etc/shadow", "/usr/bin/sudo", "/var/log/auth", "/root/.ssh", "kernel.dll", "config.sys"];
+        const ips = ["192.168.1.42", "127.0.0.1", "10.0.0.254", "172.16.0.5"];
+
+        function addLogLine() {
+            const line = document.createElement('div');
+            line.className = 'line';
+            
+            const randomCmd = cmds[Math.floor(Math.random() * cmds.length)];
+            const randomFile = files[Math.floor(Math.random() * files.length)];
+            const randomIp = ips[Math.floor(Math.random() * ips.length)];
+            const randomHex = "0x" + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+            
+            line.textContent = `> [${randomHex}] ${randomCmd} --path:${randomFile} --src:${randomIp} ... [OK]`;
+            
+            // Insertion au sommet pour le défilement vers le bas
+            terminal.insertBefore(line, terminal.firstChild);
+
+            if (terminal.childNodes.length > 35) {
+                terminal.removeChild(terminal.lastChild);
+            }
+        }
+
+        async function start() {
+            let iterations = 0;
+            const maxIterations = 120; 
+
+            const interval = setInterval(() => {
+                addLogLine();
+                iterations++;
+                if (iterations >= maxIterations) {
+                    clearInterval(interval);
+                    finishHack();
+                }
+            }, 30); 
+        }
+
+        function finishHack() {
+            // Le terminal s'efface[cite: 5]
+            terminal.style.opacity = '0';
+            // Le halo s'active[cite: 2]
+            halo.classList.add('visible');
+            
+            setTimeout(() => {
+                terminal.style.display = 'none';
+                finalContainer.style.display = 'flex';
+            }, 600);
+        }
+
+        window.onload = start;
+    </script>
+</body>
+</html>
