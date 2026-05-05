@@ -12,6 +12,7 @@
             box-sizing: border-box; overflow: hidden;
         }
 
+        /* Halo de fond[cite: 2] */
         .background-halo {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 0; height: 0; background: radial-gradient(circle, rgba(0, 255, 65, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
@@ -20,14 +21,14 @@
         .background-halo.visible { opacity: 1; width: 150vmax; height: 150vmax; }
 
         #terminal {
-            z-index: 5; font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            z-index: 5; font-size: clamp(0.6rem, 1.2vw, 0.8rem);
             transition: opacity 0.5s ease;
             flex-grow: 1; display: flex; 
             flex-direction: column; 
-            justify-content: flex-start; 
+            justify-content: flex-start; /* Défilement vers le bas */
         }
 
-        .line { margin-bottom: 4px; opacity: 0.8; }
+        .line { margin-bottom: 2px; opacity: 0.8; white-space: nowrap; }
 
         .final-container {
             position: absolute; top: 50%; left: 50%;
@@ -36,6 +37,7 @@
             align-items: center; justify-content: center;
         }
 
+        /* Animations de glitch[cite: 5] */
         .final-message {
             display: flex; flex-direction: column; align-items: center;
             text-align: center; font-weight: 900; color: #fff;
@@ -75,49 +77,50 @@
         const finalContainer = document.getElementById('final-container');
         const halo = document.getElementById('halo');
 
-        const cmds = ["INJECT", "BYPASS", "DECRYPT", "FETCH", "WIPE", "SCAN", "OVERRIDE"];
-        const files = ["/etc/shadow", "/usr/bin/sudo", "/var/log/auth", "/root/.ssh", "kernel.dll", "config.sys"];
-        const ips = ["192.168.1.42", "127.0.0.1", "10.0.0.254", "172.16.0.5"];
+        const cmds = ["INJECT", "BYPASS", "DECRYPT", "FETCH", "WIPE", "SCAN", "OVERRIDE", "STOLEN_AUTH", "ROOT_ACCESS"];
+        const files = ["/etc/shadow", "/usr/bin/sudo", "/var/log/auth", "/root/.ssh", "MBR_RECORD", "SAM_DB"];
+        const ips = ["192.168.1.42", "127.0.0.1", "10.0.0.254", "172.16.0.5", "8.8.8.8"];
 
         function addLogLine() {
             const line = document.createElement('div');
             line.className = 'line';
-            
             const randomCmd = cmds[Math.floor(Math.random() * cmds.length)];
             const randomFile = files[Math.floor(Math.random() * files.length)];
             const randomIp = ips[Math.floor(Math.random() * ips.length)];
             const randomHex = "0x" + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
             
-            line.textContent = `> [${randomHex}] ${randomCmd} --path:${randomFile} --src:${randomIp} ... [OK]`;
+            line.textContent = `> [${randomHex}] ${randomCmd} --target:${randomFile} --src:${randomIp} ... [OK]`;
             terminal.insertBefore(line, terminal.firstChild);
 
-            if (terminal.childNodes.length > 35) {
+            if (terminal.childNodes.length > 50) {
                 terminal.removeChild(terminal.lastChild);
             }
         }
 
         async function start() {
             let iterations = 0;
-            const maxIterations = 150; 
+            const maxIterations = 270; 
 
-            // Vitesse doublée : passage de 30ms à 15ms[cite: 8]
+            // Vitesse ultra-rapide (5ms) + injection triple[cite: 8]
             const interval = setInterval(() => {
                 addLogLine();
-                iterations++;
+                addLogLine();
+                addLogLine();
+                iterations += 3;
                 if (iterations >= maxIterations) {
                     clearInterval(interval);
                     finishHack();
                 }
-            }, 15); 
+            }, 5); 
         }
 
         function finishHack() {
             terminal.style.opacity = '0';
-            halo.classList.add('visible');
+            halo.classList.add('visible'); // Restauration du halo[cite: 2]
             
             setTimeout(() => {
                 terminal.style.display = 'none';
-                finalContainer.style.display = 'flex';
+                finalContainer.style.display = 'flex'; // Affichage final[cite: 5]
             }, 600);
         }
 

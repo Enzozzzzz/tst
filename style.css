@@ -79,6 +79,7 @@ body, html {
 .control.maximize { background-color: #0b0; }
 .terminal-title { float: left; line-height: 1.5em; color: #eee; font-size: 0.8em; }
 
+/* ANIMATION ORIGINALE[cite: 6] */
 .text {
     display: inline-block;
     white-space: nowrap;

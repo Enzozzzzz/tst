@@ -55,26 +55,31 @@
         const loaderBox = document.querySelector('.terminal-loader');
         const video = document.getElementById('bg-video');
 
-        // Force le play même en économie d'énergie[cite: 7]
-        function forceVideoPlay() {
+        // Tentative de lecture immédiate au chargement
+        function attemptImmediatePlay() {
             const playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch(() => {
-                    // Si l'autoplay est bloqué, on réessaye au premier clic ou touché[cite: 7]
-                    const retry = () => {
+                    // Si l'autoplay est bloqué (économie d'énergie), on attend une interaction
+                    const wakeVideo = () => {
                         video.play();
-                        document.removeEventListener('touchstart', retry);
-                        document.removeEventListener('click', retry);
+                        document.removeEventListener('touchstart', wakeVideo);
+                        document.removeEventListener('click', wakeVideo);
                     };
-                    document.addEventListener('touchstart', retry, { once: true });
-                    document.addEventListener('click', retry, { once: true });
+                    document.addEventListener('touchstart', wakeVideo);
+                    document.addEventListener('click', wakeVideo);
                 });
             }
         }
 
-        window.addEventListener('load', forceVideoPlay);
+        // Exécution immédiate et au chargement complet
+        attemptImmediatePlay();
+        window.addEventListener('load', attemptImmediatePlay);
 
         button.addEventListener('click', () => {
+            // Sécurité : forcer le play au clic si ce n'est pas déjà fait
+            video.play();
+
             mainUi.classList.add('fade-out');
             setTimeout(() => {
                 terminalScreen.classList.add('active');
@@ -85,7 +90,7 @@
                     setTimeout(() => {
                         window.location.href = "perso.html";
                     }, 600);
-                }, 5000); 
+                }, 5000); // Délai de 5 secondes maintenu[cite: 4]
             }, 500); 
         });
     </script>
